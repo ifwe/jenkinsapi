@@ -45,7 +45,7 @@ class Fingerprint(JenkinsBase):
         try:
             self.poll()
             self.unknown = False
-        except urllib2.HTTPError as err:
+        except urllib2.HTTPError,  err:
             # We can't really say anything about the validity of
             # fingerprints not found -- but the artifact can still
             # exist, so it is not possible to definitely say they are
