@@ -203,7 +203,7 @@ class Job(JenkinsBase, MutableJenkinsThing):
                     running_build = self.get_last_build()
                     running_build.block_until_complete(
                         delay=invoke_pre_check_delay)
-        except Exception as e:
+        except:
             invocation.__exit__(*sys.exc_info())
         else:
             invocation.__exit__(None, None, None)
