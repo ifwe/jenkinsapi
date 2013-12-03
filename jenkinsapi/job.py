@@ -2,6 +2,7 @@
 Module for jenkinsapi Job
 """
 
+import sys
 import json
 import logging
 import urlparse
@@ -148,7 +149,8 @@ class Job(JenkinsBase, MutableJenkinsThing):
             build_params.items()) or {}  # Via POSTed JSON
         params = {}  # Via Get string
 
-        with invocation:
+        try:
+            invocation.__enter__()
             if len(self.get_params_list()) == 0:
                 if self.is_queued():
                     raise WillNotBuild('%s is already queued' % repr(self))
@@ -201,6 +203,11 @@ class Job(JenkinsBase, MutableJenkinsThing):
                     running_build = self.get_last_build()
                     running_build.block_until_complete(
                         delay=invoke_pre_check_delay)
+        except Exception as e:
+            invocation.__exit__(*sys.exc_info())
+        else:
+            invocation.__exit__(None, None, None)
+
         return invocation
 
     def _buildid_for_type(self, buildtype):
