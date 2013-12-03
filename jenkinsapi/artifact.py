@@ -72,8 +72,11 @@ class Artifact(object):
         """
         Download the the artifact to a path.
         """
-        with open(fspath, "wb") as out:
+        out = open(fspath, "wb")
+        try:
             out.write(self.get_data())
+        finally:
+            out.close()
         return fspath
 
     def _verify_download(self, fspath):
@@ -91,11 +94,13 @@ class Artifact(object):
         """
         md5 = hashlib.md5()
         try:
-            with open(fspath, 'rb') as f:
-                for chunk in iter(lambda: f.read(chunksize), ''):
-                    md5.update(chunk)
+            f = open(fspath, 'rb')
+            for chunk in iter(lambda: f.read(chunksize), ''):
+                md5.update(chunk)
         except:
             raise
+        finally:
+            f.close()
         return md5.hexdigest()
 
     def save_to_dir(self, dirpath):
